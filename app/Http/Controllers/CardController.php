@@ -11,24 +11,23 @@ class CardController extends Controller
     public function index($id)
     {
         $data = Award::where('id', '=', $id)->first();
+        $comments = Comments::all();
 
-        return view ('card' , compact('data'));
+        return view ('card' , compact('data' , 'comments'));
 
     }
-    public function comment()
+    public function comment($id)
     {
     	$name = $_POST["name"];
 	  	$page_id = $_POST["page_id"];
-	  	$text_comment = $_POST["text_comment"];
+	  	$comment_text = $_POST["comment_text"];
 	  	$name = htmlspecialchars($name);// Преобразуем спецсимволы в HTML-сущности
-		$text_comment = htmlspecialchars($text_comment);// Преобразуем спецсимволы в HTML-сущности
+		$comment_text = htmlspecialchars($comment_text);// Преобразуем спецсимволы в HTML-сущности
 
-		$all_comments = array('page_id' => $page_id, 'commentator' => $name, 'text_comment' => $text_comment);
+		$all_comments = array('page_id' => $page_id, 'commentator' => $name, 'comment_text' => $comment_text);
 		Comments::create($all_comments);
 
-		$mysqli = new mysqli("localhost", "root", "", "db");// Подключается к базе данных
-		$mysqli->query("INSERT INTO `comments` (`commentator`, `page_id`, `comment_text`) VALUES ('$name', '$page_id', '$text_comment')");// Добавляем комментарий в таблицу
-		header("Location: ".$_SERVER["HTTP_REFERER"]);// Делаем реридект обратно
+		return redirect()->to('/awards/'.$id);
     }
 
 }
